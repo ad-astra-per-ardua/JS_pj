@@ -5,7 +5,7 @@
   "node": ">=16",
   "husky": {
     "hooks": {
-      "pre-commit": "branch-name-lint"
+      "pre-push": "branch-name-lint"
     }
   },
   "dependencies": {
