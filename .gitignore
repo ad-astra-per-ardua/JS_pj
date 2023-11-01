@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,git,pycharm+all,intellij+all,django,react,node,python,visualstudiocode
 
 ### Django ###
+server/secrets.json
 *.log
 *.pot
 *.pyc
@@ -10,7 +11,20 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media
-server/secrets.json
+
+### venv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+.Python
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+pip-selfcheck.json
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
