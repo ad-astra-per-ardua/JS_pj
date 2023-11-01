@@ -3,6 +3,11 @@
   "title": "React route search tools.",
   "version": "0.1.0",
   "node": ">=16",
+  "husky": {
+    "hooks": {
+      "pre-push": "branch-name-lint"
+    }
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -31,11 +36,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "branch-name-lint"
-    }
-  },
+
   "eslintConfig": {
     "extends": [
       "react-app",
