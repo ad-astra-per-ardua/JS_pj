@@ -4,10 +4,7 @@
   "version": "0.1.0",
   "node": ">=16",
   "main": "src/index.js",
-  "author": {
-    "name": "SeongMin KIM",
-    "email": "sinnarver15@gmail.com"
-  },
+  "author": "SeongMin KIM <sinnarver15@gmail.com>",
   "husky": {
     "hooks": {
       "pre-push": "branch-name-lint"
@@ -20,6 +17,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "navigate_project": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "^0.72.6",
@@ -48,7 +46,6 @@
   },
   "license": "MIT",
   "licenseFilename": "LICENSE",
-  "readmeFilename": "README.md",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ad-astra-per-ardua/JS_pj.git",
@@ -65,5 +62,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "Navigate service project made with React, Django, npm, Javascript",
+  "bugs": {
+    "url": "https://github.com/ad-astra-per-ardua/JS_pj/issues"
+  },
+  "homepage": "https://github.com/ad-astra-per-ardua/JS_pj#readme",
+  "keywords": []
 }
