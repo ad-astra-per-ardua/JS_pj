@@ -3,6 +3,7 @@
   "title": "React route search tools.",
   "version": "0.1.0",
   "node": ">=16",
+  "main": "src/index.js",
   "husky": {
     "hooks": {
       "pre-push": "branch-name-lint"
