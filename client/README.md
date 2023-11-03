@@ -27,9 +27,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Branch name rules
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Please ensure that your branch names adhere to the naming convention specified by the regex pattern: feature|publish|release|hotfix|develop|main)/[a-z0-9._-]+$. This means that all branch names should start with one of the prefixes 'feature', 'publish', 'release', 'hotfix', 'develop', or 'main', followed by a forward slash and then any combination of lowercase letters, numbers, dots, underscores, or hyphens. 
 
