@@ -1,7 +1,7 @@
 {
   "name": "navigate_project",
   "title": "React route search tools.",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "node": ">=16",
   "main": "src/index.js",
   "author": "SeongMin KIM <sinnarver15@gmail.com>",
@@ -34,9 +34,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "react-scripts build"
   },
   "eslintConfig": {
     "extends": [
