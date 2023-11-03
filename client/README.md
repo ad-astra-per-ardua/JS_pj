@@ -29,5 +29,6 @@ Your app is ready to be deployed!
 
 ## Branch name rules
 
-### Please ensure that your branch names adhere to the naming convention specified by the regex pattern: feature|publish|release|hotfix|develop|main)/[a-z0-9._-]+$. This means that all branch names should start with one of the prefixes 'feature', 'publish', 'release', 'hotfix', 'develop', or 'main', followed by a forward slash and then any combination of lowercase letters, numbers, dots, underscores, or hyphens. 
+-  Please ensure that your branch names adhere to the naming convention specified by the regex pattern: (feature|publish|release|hotfix|develop|main)/[a-z0-9._-]+$. 
+-  This means that all branch names should start with one of the prefixes 'feature', 'publish', 'release', 'hotfix', 'develop', or 'main', followed by a forward slash and then any combination of lowercase letters, numbers, dots, underscores, or hyphens. 
 
