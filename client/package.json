@@ -1,9 +1,13 @@
 {
-  "name": "client",
+  "name": "navigate_project",
   "title": "React route search tools.",
   "version": "0.1.0",
   "node": ">=16",
   "main": "src/index.js",
+  "author": {
+    "name": "SeongMin KIM",
+    "email": "sinnarver15@gmail.com"
+  },
   "husky": {
     "hooks": {
       "pre-push": "branch-name-lint"
