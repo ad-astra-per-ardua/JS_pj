@@ -1,7 +1,7 @@
 {
   "name": "navigate_project",
   "title": "React route search tools.",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "node": ">=16",
   "main": "src/index.js",
   "author": "SeongMin KIM <sinnarver15@gmail.com>",
@@ -65,6 +65,5 @@
   "bugs": {
     "url": "https://github.com/ad-astra-per-ardua/JS_pj/issues"
   },
-  "homepage": "https://github.com/ad-astra-per-ardua/JS_pj#readme",
   "keywords": []
 }
