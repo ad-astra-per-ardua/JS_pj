@@ -96,7 +96,6 @@ const MapComponent = () => {
           });
         }
 
-        // 지도 중앙을 사용자 위치로 설정합니다.
         map.setCenter(userPosition);
       }, (error) => {
         console.error('Geolocation service failed:', error);
@@ -116,8 +115,8 @@ const MapComponent = () => {
 
       restaurants.sort((a, b) => a.distance - b.distance);
 
-      // 여기에서 필요한 경우 상태를 업데이트하여 가장 가까운 레스토랑을 표시하거나,
-      // 추가적인 로직을 구현합니다.
+      // TODO : Update nearest Restaurants
+
     })
     .catch(error => {
       console.error('Error fetching restaurants:', error);
@@ -125,13 +124,10 @@ const MapComponent = () => {
 };
 
 
-  // 레스토랑까지의 경로 안내
   const getDirectionsToRestaurant = (restaurant) => {
     // TODO: Backend API
   };
 
-  // 현재 위치 가져오기 및 경로 찾기
-// 현재 위치를 가져와서 서버에 경로를 요청하는 함수
 const getCurrentLocationAndFindRoute = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
@@ -139,7 +135,6 @@ const getCurrentLocationAndFindRoute = () => {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
-      // 경로 찾기 함수를 호출합니다.
       findRoute(currentPos.lat, currentPos.lng, end_x, end_y);
     }, (error) => {
       console.error("Geolocation service failed:", error);
