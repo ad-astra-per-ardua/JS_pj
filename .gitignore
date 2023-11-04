@@ -16,7 +16,17 @@ media
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
 
+.Python
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
 pip-selfcheck.json
+server/JsProject
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
