@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
-from server.mainbackend import views
+from mainbackend import views
 from django.views.generic import *
 
 urlpatterns = [

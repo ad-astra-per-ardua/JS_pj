@@ -3,11 +3,11 @@ from django.http import JsonResponse, HttpResponse
 import secrets
 import requests,logging,ast
 import json
-from server.JS_pj.settings import get_secret
+from JS_pj.settings import get_secret
 from django.views.decorators.csrf import csrf_exempt
 import urllib.request
 
-from server import mainbackend
+import mainbackend
 
 logger = logging.getLogger(__name__)
 
