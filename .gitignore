@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,windows,git,pycharm+all,intellij+all,django,react,node,python,visualstudiocode
 
 ### Django ###
-server/secrets.json
+secrets.json
 *.log
 *.pot
 *.pyc
