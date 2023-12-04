@@ -4,15 +4,12 @@ var markers = {};
 var userPosition = null;
 var map;
 
-var userMarker
 function initMap() {
-  let defaultposition = new naver.maps.LatLng(35.8469, 128.5828)
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       userPosition = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
       var mapOptions = {
-        center: defaultposition,
+        center: userPosition,
         zoom: 17,
         scaleControl: false,
         logoControl: false,
@@ -21,21 +18,17 @@ function initMap() {
         overlayType: 'bg.ol.ts.ctt.lko',
       };
       map = new naver.maps.Map('map', mapOptions);
+
       new naver.maps.Marker({
-        position: defaultposition,
+        position: userPosition,
         map: map,
         icon: {
           url: '/static/assets/map_pin_user_icon_206536.png',
           size: new naver.maps.Size(40, 40),
           origin: new naver.maps.Point(0, 0),
           anchor: new naver.maps.Point(20, 20)
-        },
-          draggable: true
+        }
       });
-      naver.maps.Event.addListener(userMarker, 'dragend', function() {
-        var newPosition = userMarker.getPosition();
-        });
-
       // 모든 시장을 지도에 표시
       showAllRestaurants(map);
 
@@ -125,38 +118,38 @@ document.addEventListener('DOMContentLoaded', function() {
   attachMarketButtonListeners();
 });
 
-    function getDirectionsToRestaurant(restaurant) {
-        if (userPosition) {
-            const startLat = userPosition.lat();
-            const startLng = userPosition.lng();
-            const endLat = restaurant.latitude;
-            const endLng = restaurant.longitude;
-            const is_mobile = isMobile();
+ function getDirectionsToRestaurant(restaurant) {
+    if (userPosition) {
+        const startLat = userPosition.lat();
+        const startLng = userPosition.lng();
+        const endLat = restaurant.latitude;
+        const endLng = restaurant.longitude;
+        const is_mobile = isMobile();
 
-            console.log(is_mobile);
+        console.log(is_mobile);
 
-            $.ajax({
-                url: `/route_link/`,
-                type: "GET",
-                data: {
-                    start_x: startLng,
-                    start_y: startLat,
-                    end_x: endLng,
-                    end_y: endLat,
-                    mobile: is_mobile,
-                },
-                success: function (data) {
-                    if (data.result === "success") {
-                        window.open(data.route_url, '_blank');
-                    } else {
-                        alert('길찾기를 실패했습니다.');
-                    }
+        $.ajax({
+            url: `/route_link/`,
+            type: "GET",
+            data: {
+                start_x: startLng,
+                start_y: startLat,
+                end_x: endLng,
+                end_y: endLat,
+                mobile: is_mobile,
+            },
+            success: function (data) {
+                if (data.result === "success") {
+                    window.open(data.route_url, '_blank');
+                } else {
+                    alert('길찾기를 실패했습니다.');
                 }
-            });
-        } else {
-            alert("사용자 위치를 먼저 설정해주세요.");
-        }
+            }
+        });
+    } else {
+        alert("사용자 위치를 먼저 설정해주세요.");
     }
+}
 
 //사용자의 접속 클라이언트 확인
     function isMobile() {
