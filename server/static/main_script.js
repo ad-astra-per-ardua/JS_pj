@@ -4,12 +4,15 @@ var markers = {};
 var userPosition = null;
 var map;
 
+var userMarker
 function initMap() {
+  let defaultposition = new naver.maps.LatLng(35.8469, 128.5828)
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       userPosition = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
       var mapOptions = {
-        center: userPosition,
+        center: defaultposition,
         zoom: 17,
         scaleControl: false,
         logoControl: false,
@@ -19,14 +22,22 @@ function initMap() {
       };
       map = new naver.maps.Map('map', mapOptions);
       new naver.maps.Marker({
-        position: userPosition,
-          overlayType: 'bg.ol.ts.ctt.lko',
-        map: map
+        position: defaultposition,
+        map: map,
+        icon: {
+          url: '/static/assets/map_pin_user_icon_206536.png',
+          size: new naver.maps.Size(40, 40),
+          origin: new naver.maps.Point(0, 0),
+          anchor: new naver.maps.Point(20, 20)
+        },
+          draggable: true
       });
+      naver.maps.Event.addListener(userMarker, 'dragend', function() {
+        var newPosition = userMarker.getPosition();
+        });
 
       // 모든 시장을 지도에 표시
       showAllRestaurants(map);
-      showShopsInMarket(map)
 
     }, function(err) {
       console.error(err);
@@ -42,22 +53,29 @@ function viewDetails(marketName) {
     window.location.href = `/details/${encodeURIComponent(marketName)}`;
 }
 function createMarkerWithInfo(market, map) {
+    console.log("Market data:", market);  // for debugging
     const position = new naver.maps.LatLng(market.latitude, market.longitude);
     const marker = new naver.maps.Marker({
         position: position,
         map: map,
         title: market.name
     });
+    const phoneNumber = market.phone_number ? market.phone_number : "정보 없음";
+    const cuisineType = market.cuisine_type ? market.cuisine_type : "정보 없음";
+
+    console.log("Phone Number:", phoneNumber);  // for debugging
+    console.log("Cuisine Type:", cuisineType);
 
     const content = `
     <div style="position: relative; text-align: center; border-radius: 10px; padding: 10px;">
         <div style="font-size: 16px; margin-bottom: 5px;">${market.name}</div>
-        <div style="font-size: 12px; color: #333; margin-bottom: 10px;">주소: ${market.address}</div>
+        <div style="font-size: 12px; color: #333; margin-bottom: 10px;"><strong>주소:</strong> ${market.address}</div>
+        <div style="font-size: 12px; color: #333; margin-bottom: 10px;"><strong>전화번호:</strong> ${phoneNumber} <strong>업태 or 대표메뉴:</strong> ${cuisineType}</div>
         <button onclick="getDirectionsToRestaurant({name: '${market.name}', latitude: ${market.latitude}, longitude: ${market.longitude}})">길찾기</button>
-        <button onclick="viewDetails('${market.name}')" style="margin-left: 10px;">상세보기</button>
         <div style="position: absolute; top: 5px; right: 5px; cursor: pointer;" onclick="closeInfowindow()">X</div>
     </div>
     `;
+
 
     const infowindow = new naver.maps.InfoWindow({
         content: content
@@ -101,69 +119,7 @@ function showAllRestaurants(map) {
             }
         });
 }
-function moveAndRemoveMarker(marketName) {
-  if (markers[marketName]) {
-    map.setCenter(markers[marketName].getPosition());
-    markers[marketName].setMap(null);
-    delete markers[marketName];
-  } else {
-    console.error("마커를 찾을 수 없습니다.");
-  }
-}
 
-function showShopsInMarket(map) {
-  fetch(`/api/get_shops/`)
-    .then(response => response.json())
-    .then(data => {
-      let shops = data.shops
-        for (const shop of shops) {
-                createShopMarker(shop, map);
-            }
-    });
-}
-
-
-function createShopMarker(shop, map) {
-  const shopPosition = new naver.maps.LatLng(shop.latitude, shop.longitude);
-  const shopMarker = new naver.maps.Marker({
-    position: shopPosition,
-    map: map,
-    title: shop.shop_name,
-    icon: {
-      url: 'https://icons.iconarchive.com/icons/emey87/trainee/16/Gps-icon.png',
-      scaledSize: new naver.maps.Size(25, 25)
-    }
-  });
-
-  const infowindowContent = `
-    <div style="position: relative; text-align: left; border-radius: 10px; padding: 10px; display: flex; flex-direction: column;">
-  <div style="display: flex; justify-content: start; align-items: center; margin-bottom: 10px;">
-    <div style="font-size: 16px; margin-right: 10px;"><strong>${shop.shop_name}</strong></div>
-    <div style="font-size: 12px; color: #555;"><strong>분류:</strong>${shop.shop_category}(${shop.main_products})</div>
-  </div>
-  <div style="font-size: 14px; text-align: center; color: #333; margin-bottom: 10px;">주소: ${shop.road_address}</div>
-  <div style="text-align: center;">
-    <button onclick="getDirectionsToRestaurant({name: '${shop.shop_name}', latitude: ${shop.latitude}, longitude: ${shop.longitude}})">길찾기</button>
-    <button onclick="viewDetails('${shop.shop_name}')" style="margin-left: 10px;">상세보기</button>
-  </div>
-  <div style="position: absolute; top: 5px; right: 5px; cursor: pointer;" onclick="closeInfowindow()">X</div>
-</div>
-
-
-  `;
-  const infowindow = new naver.maps.InfoWindow({
-    content: infowindowContent
-  });
-  naver.maps.Event.addListener(shopMarker, 'click', function() {
-    if (openedInfowindow) {
-      openedInfowindow.close();
-    }
-    infowindow.open(map, shopMarker);
-    openedInfowindow = infowindow;
-  });
-
-  console.log(shopMarker);
-}
 document.addEventListener('DOMContentLoaded', function() {
   initMap();
   attachMarketButtonListeners();
@@ -228,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function findRoute(start_x, start_y, end_x, end_y) {
-        // Django의 route_link 함수를 호출
+        // Call django route function
         $.ajax({
             url: "/route_link/",
             type: "GET",
@@ -296,16 +252,3 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     })
-
-
-
-function attachMarketButtonListeners() {
-  const marketButtons = document.querySelectorAll('header button');
-  marketButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const marketName = this.dataset.marketName;
-      moveAndRemoveMarker(marketName);
-      showShopsInMarket(marketName);
-    });
-  });
-}
