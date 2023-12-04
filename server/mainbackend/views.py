@@ -1,15 +1,15 @@
-from django.shortcuts import render,redirect
+from django.contrib.sites import requests
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
-import secrets
-import requests,logging,ast
+from .models import Restaurant
+import requests
+import logging,ast
 import json
-from JS_pj.settings import get_secret
 from django.views.decorators.csrf import csrf_exempt
 import urllib.request
 
-import mainbackend
-
 logger = logging.getLogger(__name__)
+
 
 @csrf_exempt
 def create_naver_directions_link(request):
@@ -53,7 +53,7 @@ def route_link(request):
         end_x = request.GET.get('end_x', None)
         end_y = request.GET.get('end_y', None)
         is_mobile = int(request.GET.get('mobile', None))
-        start_name = request.GET.get('start_name', '내 위치')
+        start_name = request.GET.get('start_name')
         end_name = request.GET.get('end_name')
 
         url = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving"
@@ -71,7 +71,7 @@ def route_link(request):
         if is_mobile:
             final_url = f"https://m.search.naver.com/search.naver?query=%EB%B9%A0%EB%A5%B8%EA%B8%B8%EC%B0%BE%EA%B8%B0&nso_path=placeType%5Eplace%3Bname%5E출발지%3Baddress%5E%3Blongitude%5E{start_x}%3Blatitude%5E{start_y}%3Bcode%5E%7Ctype%5Eplace%3Bname%5E도착지%3Baddress%5E%3Blongitude%5E{end_x}%3Blatitude%5E{end_y}%3Bcode%5E%7Cobjtype%5Epath%3Bby%5Epubtrans"
         else:
-            final_url = f"http://map.naver.com/index.nhn?slng={start_x}&slat={start_y}&stext={start_name}&elng={end_x}&elat={end_y}&pathType=0&showMap=true&etext=도착지&menu=rout"
+            final_url = f"http://map.naver.com/index.nhn?slng={start_x}&slat={start_y}&stext={start_name}&elng={end_x}&elat={end_y}&pathType=0&showMap=true&etext={end_name}&menu=rout"
 
         logger.debug(f"Final URL: {final_url}")
 
@@ -81,20 +81,9 @@ def route_link(request):
         return JsonResponse({'result': 'error', 'message': str(e)})
 
 def get_all_restaurants(request):
-    restaurants = mainbackend.objects.all()
-    data = [
-        {
-            "image": restaurant.image.url if restaurant.image else None,
-            "name": restaurant.name,
-            "menu": restaurant.menu.split("', '")[0].lstrip("'["),
-            "address": restaurant.address,
-            "latitude": restaurant.latitude,
-            "longitude": restaurant.longitude,
-            "phone": restaurant.phone if restaurant.image else None
-        }
-        for restaurant in restaurants if restaurant.latitude and restaurant.longitude
-    ]
-    return JsonResponse({'restaurants': data})
+    markets = Restaurant.objects.all().values('name', 'address', 'latitude', 'longitude')
+    markets_list = list(markets)
+    return JsonResponse({'markets': markets_list})
 
 
 def geocode_address(address):
@@ -120,6 +109,7 @@ def geocode_address(address):
     else:
         return None, None
 
+
 def secret(request):
     NAVER_API_KEY_ID = get_secret("NAVER_API_KEY_ID")
     return render(request, 'index.html', {'NAVER_API_KEY_ID': NAVER_API_KEY_ID})
@@ -136,3 +126,16 @@ def get_naver_directions(request):
     link = f"https://map.naver.com/v5/directions/{start_latitude},{start_longitude},{start_name}/{end_latitude},{end_longitude},{end_name}/"
     return JsonResponse({'link': link})
 
+
+def save_to_database(df, region):
+    for _, row in df.iterrows():
+        Restaurant.objects.create(
+            name=row['업소명'],
+            phone_number=row['전화번호'] if pd.notna(row['전화번호']) else '',
+            address=row['도로명주소'] if pd.notna(row['도로명주소']) else '',
+            cuisine_type=row['업태'],
+            latitude=row['위도'],
+            longitude=row['경도']
+        )
+    for region, df in dataframes.items():
+        save_to_database(df, region)

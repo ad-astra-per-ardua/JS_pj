@@ -1,13 +1,12 @@
 from django.db import models
 
-class mainbackend(models.Model):
-    name = models.CharField(max_length=100, null=False)
-    menu = models.CharField(max_length=200)
-    address = models.CharField(max_length=200)
-    type = models.CharField(max_length=20, choices=[('음식점', '음식점'), ('카페', '카페')], blank=True, null=True)
-    phone = models.CharField(max_length=15, null=False, default='정보 없음')
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
+class Restaurant(models.Model):
+    name = models.CharField(max_length=100)  # 업소명
+    phone_number = models.CharField(max_length=50)  # 전화번호
+    address = models.CharField(max_length=255)  # 도로명주소
+    cuisine_type = models.CharField(max_length=50)  # 업태
+    latitude = models.FloatField(null=True, blank=True)  # 위도
+    longitude = models.FloatField(null=True, blank=True)  # 경도
 
     def __str__(self):
         return self.name

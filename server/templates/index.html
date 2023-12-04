@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+
+    <style type="text/css">
+        .lw {
+            font-size: 60px;
+        }
+    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        #map {
+            flex: 1;
+            height: 80vh;
+            position: relative;
+            width: 100%;
+        }
+
+    </style>
+    <title>네이버 지도 API 예시</title>
+</head>
+<body>
+    <div id="map" tabindex="0" style="position: relative; overflow: hidden; background: url(&quot;https://ssl.pstatic.net/static/maps/mantle/2x/auth_fail.png&quot;) center center / 256px 256px rgb(248, 249, 250);"></div>
+
+    <footer>
+         <button class="footer-button"><img src="https://cdn.discordapp.com/attachments/919518363695345724/1172350656628150282/gps.svg?ex=655fffa1&is=654d8aa1&hm=5804d8423b0dbc709dd1fbde3c6fb68c547083cd6a99ae636bb1eae55d337a39&">내 주변</button>
+        <button class="footer-button"><img src="https://cdn.discordapp.com/attachments/919518363695345724/1172351241104408586/star-outline.svg?ex=6560002d&is=654d8b2d&hm=dc5e1d6e411ae74035acf54aafa782191571902649879c1e0ccdb4cc3b8735cc&"> 저장</button>
+        <button class="footer-button"><img src="../static/asset/map-2.svg" alt=""> 내비게이션</button>
+        <button class="footer-button"><img src="../static/asset/people-rounded.png" alt=""> MY Page</button>
+    </footer>
+    <!-- 네이버 지도 API 호출 스크립트 -->
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId={{ NAVER_API_KEY_ID }}"></script>
+    <script src="../static/main_script.js"></script>
+
+
+</body>
+</html>
