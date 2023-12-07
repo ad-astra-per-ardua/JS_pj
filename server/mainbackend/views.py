@@ -9,6 +9,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 import urllib.request
 from django.contrib.admin.utils import quote
+from django.core.paginator import Paginator
 
 logger = logging.getLogger(__name__)
 
@@ -115,3 +116,17 @@ def get_naver_directions(request):
     link = f"https://map.naver.com/v5/directions/{start_latitude},{start_longitude},{start_name}/{end_latitude},{end_longitude},{end_name}/"
     return JsonResponse({'link': link})
 
+
+def index(request):
+    district = request.GET.get('district', '')
+    restaurants_list = Restaurant.objects.all()
+
+    if district:
+        restaurants_list = restaurants_list.filter(address__icontains=district)
+
+    paginator = Paginator(restaurants_list, 10)
+    page = request.GET.get('page')
+    restaurants = paginator.get_page(page)
+
+    districts = ['남구', '북구', '서구', '동구', '달서구', '수성구']
+    return render(request, 'index.html', {'restaurants': restaurants, 'districts': districts})

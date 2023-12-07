@@ -46,7 +46,7 @@ function viewDetails(marketName) {
     window.location.href = `/details/${encodeURIComponent(marketName)}`;
 }
 function createMarkerWithInfo(market, map) {
-    console.log("Market data:", market);  // for debugging
+      // for debugging
     const position = new naver.maps.LatLng(market.latitude, market.longitude);
     const marker = new naver.maps.Marker({
         position: position,
@@ -56,8 +56,6 @@ function createMarkerWithInfo(market, map) {
     const phoneNumber = market.phone_number ? market.phone_number : "정보 없음";
     const cuisineType = market.cuisine_type ? market.cuisine_type : "정보 없음";
 
-    console.log("Phone Number:", phoneNumber);  // for debugging
-    console.log("Cuisine Type:", cuisineType);
 
     const content = `
     <div style="position: relative; text-align: center; border-radius: 10px; padding: 10px;">

@@ -1,39 +1,85 @@
 <!DOCTYPE html>
 <html lang="kr">
 <head>
-
-    <style type="text/css">
-        .lw {
-            font-size: 60px;
-        }
-    </style>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
+    <style type="text/css">
+        .container {
+            display: flex;
+        }
 
         #map {
             flex: 1;
             height: 80vh;
             position: relative;
-            width: 100%;
+            width: 80%;
         }
 
+        .dynamic-list {
+            width: 20%;
+            height: 80vh;
+            overflow-y: auto;
+            background-color: #f0f0f0;
+        }
+
+        .filter-container {
+            margin: 10px;
+        }
+
+        .pagination-container {
+            margin: 10px;
+            text-align: center;
+        }
+
+        .pagination-container a, .pagination-container span {
+            margin: 0 5px;
+        }
     </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Javascript Project</title>
 </head>
 <body>
-    <div id="map" tabindex="0" style="position: relative; overflow: hidden; background: url(&quot;https://ssl.pstatic.net/static/maps/mantle/2x/auth_fail.png&quot;) center center / 256px 256px rgb(248, 249, 250);"></div>
-
+    <div class="container">
+        <div id="map" tabindex="0"></div>
+        <div class="dynamic-list">
+            <div class="filter-container">
+                <select onchange="location = this.value;">
+                    <option value="?">전체보기</option>
+                    {% for district in districts %}
+                    <option value="?district={{ district }}" {% if district == request.GET.district %}selected{% endif %}>
+                        {{ district }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% for restaurant in restaurants %}
+            <div class="restaurant-item">
+                <h3>{{ restaurant.name }}</h3>
+                <p>{{ restaurant.address }}</p>
+                <p>{{ restaurant.phone_number }}</p>
+                <p>{{ restaurant.cuisine_type }}</p>
+            </div>
+            {% endfor %}
+            <div class="pagination-container">
+                {% for page_num in restaurants.paginator.page_range %}
+                    {% if restaurants.number == page_num %}
+                        <span>{{ page_num }}</span>
+                    {% else %}
+                        <a href="?page={{ page_num }}{% if request.GET.district %}&district={{ request.GET.district }}{% endif %}">{{ page_num }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
     <footer>
          <button class="footer-button"><img src="https://cdn.discordapp.com/attachments/919518363695345724/1172350656628150282/gps.svg?ex=655fffa1&is=654d8aa1&hm=5804d8423b0dbc709dd1fbde3c6fb68c547083cd6a99ae636bb1eae55d337a39&">내 주변</button>
-
     </footer>
     <!-- 네이버 지도 API 호출 스크립트 -->
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId={{ NAVER_API_KEY_ID }}"></script>
     <script src="../static/main_script.js"></script>
-
-
+    <script>
+        var naverApiKey = '{{ NAVER_API_KEY_ID }}';
+    </script>
 </body>
 </html>
