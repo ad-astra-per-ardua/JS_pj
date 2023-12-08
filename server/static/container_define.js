@@ -17,9 +17,9 @@ function loadRestaurants(page) {
             'page': page
         },
         success: function(data) {
-            updateRestaurantsContainer(data.markets); // 음식점 목록 업데이트
-            showFilteredRestaurants(data.markets, map); // 필터링된 결과를 지도에 표시
-            updatePagination(data.total_pages, page); // 페이징 업데이트
+            updateRestaurantsContainer(data.markets);
+            showFilteredRestaurants(data.markets, map);
+            updatePagination(data.total_pages, page);
         },
         error: function(error) {
             console.error(error);
@@ -49,7 +49,7 @@ function filterRestaurants() {
     var selectedDistrict = document.getElementById('districtSelect').value;
 
     $.ajax({
-        url: '/api/get_all_restaurants/',
+        url: '/api/filtered/',
         type: 'GET',
         data: {
             'district': selectedDistrict

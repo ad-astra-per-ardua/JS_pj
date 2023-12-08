@@ -4,6 +4,8 @@ var markers = {};
 var userPosition = null;
 var map;
 
+// initial map setting
+
 function initMap() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -44,9 +46,7 @@ function initMap() {
 document.addEventListener('DOMContentLoaded', initMap);
 var openedInfowindow = null;
 
-function viewDetails(marketName) {
-    window.location.href = `/details/${encodeURIComponent(marketName)}`;
-}
+
 function createMarkerWithInfo(market, map) {
       // for debugging
     const position = new naver.maps.LatLng(market.latitude, market.longitude);
@@ -82,7 +82,6 @@ function createMarkerWithInfo(market, map) {
         openedInfowindow = infowindow;
     });
 
-    // 마커를 markers 객체에 저장
     markers[market.name] = marker;
 }
 function closeInfowindow() {
@@ -104,7 +103,7 @@ function loadRestaurants(page) {
         },
         success: function(data) {
             updateRestaurantsContainer(data.markets);
-            showFilteredRestaurants(data, map); // 데이터 전체를 전달
+            showFilteredRestaurants(data, map);
             updatePagination(data.total_pages, page);
         },
         error: function(error) {
@@ -120,7 +119,7 @@ function addClickEventsToRestaurants(data) {
 }
 
 function attachClickEventToRestaurant(restaurant) {
-    var restaurantElement = document.getElementById('restaurant-' + restaurant.name); // 예: 각 음식점 요소의 ID는 'restaurant-음식점명'
+    var restaurantElement = document.getElementById('restaurant-' + restaurant.name);
     restaurantElement.addEventListener('click', function() {
         simulateMarkerClick(restaurant.name);
     });
@@ -144,10 +143,6 @@ function showAllRestaurants(map) {
             addClickEventsToRestaurants(markets)
         });
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-  initMap();
-});
 
 function showFilteredRestaurants(data, map) {
     clearMarkers();
@@ -214,7 +209,6 @@ function clearMarkers() {
         }
         return result;
     }
-
     function getCurrentLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -267,6 +261,7 @@ function clearMarkers() {
         return distance;
     }
 
+    // Cross Site Request Forgery
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -283,17 +278,3 @@ function clearMarkers() {
     }
 
     const csrftoken = getCookie('csrftoken');
-
-    document.addEventListener("DOMContentLoaded", function () {
-        getCurrentLocation();
-        document.body.addEventListener("click", function (event) {
-            if (event.target.classList.contains("detail-button")) {
-                const restaurantId = event.target.getAttribute("data-id");
-                if (restaurantId) {
-                    navigateToDetail(restaurantName);
-                } else {
-                    console.error("restaurantId가 정의되지 않았습니다.");
-                }
-            }
-        });
-    })
