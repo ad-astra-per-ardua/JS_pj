@@ -70,6 +70,30 @@ def route_link(request):
     except Exception as e:
         return JsonResponse({'result': 'error', 'message': str(e)})
 
+
+def filtered(request):
+    district = request.GET.get('district', '')
+    page = request.GET.get('page', 1)
+    restaurants_list = Restaurant.objects.all().order_by('name')  # 정렬 추가
+
+    if district:
+        restaurants_list = restaurants_list.filter(address__icontains=district)
+
+    paginator = Paginator(restaurants_list, 3)  # 페이지당 5개 항목
+    try:
+        restaurants = paginator.page(page)
+    except PageNotAnInteger:
+        restaurants = paginator.page(1)
+    except EmptyPage:
+        restaurants = paginator.page(paginator.num_pages)
+
+    restaurants_data = list(restaurants.object_list.values('name', 'address', 'phone_number', 'cuisine_type'))
+
+    return JsonResponse({
+        'markets': restaurants_data,
+        'total_pages': paginator.num_pages
+    }, safe=False, json_dumps_params={'ensure_ascii': False})
+
 def get_all_restaurants(request):
     markets = Restaurant.objects.all().values('name', 'address', 'latitude', 'longitude', 'phone_number','cuisine_type')
     markets_list = list(markets)
@@ -124,7 +148,7 @@ def index(request):
     if district:
         restaurants_list = restaurants_list.filter(address__icontains=district)
 
-    paginator = Paginator(restaurants_list, 10)
+    paginator = Paginator(restaurants_list, 5)
     page = request.GET.get('page')
     restaurants = paginator.get_page(page)
 

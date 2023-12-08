@@ -2,22 +2,19 @@ import pandas as pd
 import requests
 from JS_pj.settings import get_secret
 
-# 파일 경로
 files = {
     "남구": "대구광역시 남구_모범음식점 현황_20230809.csv",
     "북구": "대구광역시 북구_모범음식점_20230907.csv",
     "서구": "대구광역시 서구_모범음식점 현황_20230403.csv",
     "동구": "대구광역시_동구_모범음식점현황_20230406.csv",
-    "달서구": "대구광역시 달서구_음식점 현황_20230320.csv",
     "수성구": "대구광역시_수성구 모범음식점 현황_20221206.csv"
 }
 
-# 각 파일을 불러오기
 dataframes = {}
 for region, file_path in files.items():
     dataframes[region] = pd.read_csv(file_path, encoding='CP949')
 
-# 업태 유추 함수
+
 def infer_cuisine_type(menu):
     if pd.isna(menu):
         return ''
@@ -35,7 +32,6 @@ def infer_cuisine_type(menu):
     else:
         return ''
 
-# 위도와 경도를 추출하는 함수
 def geocode_address(address):
     naverapi = get_secret("NAVER_API_KEY_ID")
     naverpass = get_secret("NAVER_API_KEY_SECRET")
@@ -57,10 +53,8 @@ def geocode_address(address):
     else:
         return None, None
 
-# 각 구별 데이터 처리
 for region, df in dataframes.items():
-    # 컬럼 표준화
-    if region in ['남구', '북구', '서구', '수성구', '달서구']:
+    if region in ['남구', '북구', '서구', '수성구']:
         df['도로명주소'] = df['소재지(도로명)'] if '소재지(도로명)' in df.columns else df['소재지도로명주소']
     elif region == '동구':
         df['도로명주소'] = df['주소']
@@ -71,30 +65,24 @@ for region, df in dataframes.items():
     df['전화번호'] = df['소재지전화번호'] if '소재지전화번호' in df.columns else df['전화번호']
     df['업태'] = df['업태명'] if '업태명' in df.columns else ''
 
-    # 업태 유추
     if region in ['남구', '서구', '동구'] and '대표메뉴' in df.columns:
         df['업태'] = df['대표메뉴'].apply(infer_cuisine_type)
-    elif region == '달서구':
-        df['업태'] = ''
 
     if '위도' not in df.columns:
         df['위도'] = None
     if '경도' not in df.columns:
         df['경도'] = None
 
-    # 위도, 경도 처리
-    if region != '달서구':  # 달서구는 위도, 경도가 이미 포함되어 있음
+    if region != '달서구':
         for idx, row in df.iterrows():
             if pd.isna(row['위도']) or pd.isna(row['경도']):
                 latitude, longitude = geocode_address(row['도로명주소'])
                 df.at[idx, '위도'] = latitude
                 df.at[idx, '경도'] = longitude
 
-    # 필요한 컬럼 선택
     df = df[['업소명', '전화번호', '도로명주소', '업태', '위도', '경도']]
     dataframes[region] = df
 
-# 완성된 데이터 출력
 for region, df in dataframes.items():
     output_file_path = f"converted/processed_{region}.csv"
     df.to_csv(output_file_path, index=False, encoding='utf-8-sig')

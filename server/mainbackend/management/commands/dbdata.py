@@ -11,7 +11,6 @@ class Command(BaseCommand):
             "북구": ("converted/processed_북구.csv", 'UTF-8-SIG'),
             "서구": ("converted/processed_서구.csv", 'EUC-KR'),
             "동구": ("converted/processed_동구.csv", 'EUC-KR'),
-            "달서구": ("converted/processed_달서구.csv", 'CP949'),
             "수성구": ("converted/processed_수성구.csv", 'UTF-8-SIG')
         }
 

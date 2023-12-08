@@ -31,6 +31,8 @@ function initMap() {
       });
       // 모든 시장을 지도에 표시
       showAllRestaurants(map);
+      showFilteredRestaurants()
+
 
     }, function(err) {
       console.error(err);
@@ -83,15 +85,6 @@ function createMarkerWithInfo(market, map) {
     // 마커를 markers 객체에 저장
     markers[market.name] = marker;
 }
-
-
-// 지도를 클릭했을 때의 이벤트
-    naver.maps.Event.addListener(map, 'click', function () {
-        if (openedInfowindow) {  // 이미 열린 정보창이 있다면
-            openedInfowindow.close();  // 그 정보창을 닫는다
-            openedInfowindow = null;  // 열린 정보창 변수를 초기화한다
-        }
-    });
 function closeInfowindow() {
     if (openedInfowindow) {
         openedInfowindow.close();
@@ -99,22 +92,84 @@ function closeInfowindow() {
     }
 }
 
+function loadRestaurants(page) {
+    var selectedDistrict = $('#districtSelect').val();
+
+    $.ajax({
+        url: '/api/filtered/',
+        type: 'GET',
+        data: {
+            'district': selectedDistrict,
+            'page': page
+        },
+        success: function(data) {
+            updateRestaurantsContainer(data.markets);
+            showFilteredRestaurants(data, map); // 데이터 전체를 전달
+            updatePagination(data.total_pages, page);
+        },
+        error: function(error) {
+            console.error(error);
+        }
+    });
+}
+
+function addClickEventsToRestaurants(data) {
+    data.forEach(function(restaurant) {
+        attachClickEventToRestaurant(restaurant);
+    });
+}
+
+function attachClickEventToRestaurant(restaurant) {
+    var restaurantElement = document.getElementById('restaurant-' + restaurant.name); // 예: 각 음식점 요소의 ID는 'restaurant-음식점명'
+    restaurantElement.addEventListener('click', function() {
+        simulateMarkerClick(restaurant.name);
+    });
+}
+
+function simulateMarkerClick(restaurantName) {
+    if (markers[restaurantName]) {
+        new google.maps.event.trigger(markers[restaurantName], 'click');
+    }
+}
+
+
 function showAllRestaurants(map) {
     fetch(`/api/get_all_restaurants/`)
         .then(response => response.json())
         .then(data => {
             let markets = data.markets;
-
             for (const market of markets) {
                 createMarkerWithInfo(market, map);
             }
+            addClickEventsToRestaurants(markets)
         });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   initMap();
-  attachMarketButtonListeners();
 });
+
+function showFilteredRestaurants(data, map) {
+    clearMarkers();
+    if (data.markets && data.markets.length > 0) {
+        data.markets.forEach(function(restaurant) {
+            createMarkerWithInfo(restaurant, map);
+        });
+    }
+}
+
+
+
+function clearMarkers() {
+    for (var key in markers) {
+        if (markers.hasOwnProperty(key)) {
+            markers[key].setMap(null);
+        }
+    }
+    markers = {};
+}
+
+
 
  function getDirectionsToRestaurant(restaurant) {
     if (userPosition) {
@@ -231,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.addEventListener("DOMContentLoaded", function () {
         getCurrentLocation();
-        showAllRestaurants();
         document.body.addEventListener("click", function (event) {
             if (event.target.classList.contains("detail-button")) {
                 const restaurantId = event.target.getAttribute("data-id");

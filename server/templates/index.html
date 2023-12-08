@@ -10,14 +10,31 @@
 
         #map {
             flex: 1;
-            height: 80vh;
+            height: 95vh;
             position: relative;
             width: 80%;
         }
+        .restaurant-item {
+            border: 1px solid #ddd; /* 테두리 */
+            background-color: white; /* 배경색 */
+            border-radius: 10px; /* 꼭지점 둥글기 */
+            padding: 15px; /* 패딩 */
+            margin-bottom: 10px; /* 요소 사이의 간격 */
+            transition: box-shadow 0.3s; /* 효과 전환 */
+        }
+        #restaurantsContainer {
+            margin: 20px; /* 상하좌우 모두에 20px의 마진 적용 */
+        }
+
+
+        .restaurant-item:hover {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 마우스 올렸을 때 그림자 효과 */
+        }
+
 
         .dynamic-list {
             width: 20%;
-            height: 80vh;
+            height: 95vh;
             overflow-y: auto;
             background-color: #f0f0f0;
         }
@@ -37,6 +54,7 @@
     </style>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../static/container_define.js"></script>
     <title>Javascript Project</title>
 </head>
 <body>
@@ -44,37 +62,22 @@
         <div id="map" tabindex="0"></div>
         <div class="dynamic-list">
             <div class="filter-container">
-                <select onchange="location = this.value;">
-                    <option value="?">전체보기</option>
-                    {% for district in districts %}
-                    <option value="?district={{ district }}" {% if district == request.GET.district %}selected{% endif %}>
-                        {{ district }}
-                    </option>
-                    {% endfor %}
+                <select id="districtSelect" onchange="filterRestaurants()">
+                    <option value="">전체보기</option>
+                    <option value="남구">남구</option>
+                    <option value="서구">서구</option>
+                    <option value="북구">북구</option>
+                    <option value="동구">동구</option>
+                    <option value="달서구">달서구</option>
+                    <option value="수성구">수성구</option>
                 </select>
             </div>
-            {% for restaurant in restaurants %}
-            <div class="restaurant-item">
-                <h3>{{ restaurant.name }}</h3>
-                <p>{{ restaurant.address }}</p>
-                <p>{{ restaurant.phone_number }}</p>
-                <p>{{ restaurant.cuisine_type }}</p>
+            <div id="restaurantsContainer">
             </div>
-            {% endfor %}
-            <div class="pagination-container">
-                {% for page_num in restaurants.paginator.page_range %}
-                    {% if restaurants.number == page_num %}
-                        <span>{{ page_num }}</span>
-                    {% else %}
-                        <a href="?page={{ page_num }}{% if request.GET.district %}&district={{ request.GET.district }}{% endif %}">{{ page_num }}</a>
-                    {% endif %}
-                {% endfor %}
+            <div id="paginationContainer" class="pagination-container">
             </div>
-        </div>
+
     </div>
-    <footer>
-         <button class="footer-button"><img src="https://cdn.discordapp.com/attachments/919518363695345724/1172350656628150282/gps.svg?ex=655fffa1&is=654d8aa1&hm=5804d8423b0dbc709dd1fbde3c6fb68c547083cd6a99ae636bb1eae55d337a39&">내 주변</button>
-    </footer>
     <!-- 네이버 지도 API 호출 스크립트 -->
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId={{ NAVER_API_KEY_ID }}"></script>
     <script src="../static/main_script.js"></script>
